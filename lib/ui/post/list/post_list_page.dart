@@ -1,6 +1,13 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:post_it_post/data/api/post_api.dart';
 import 'package:post_it_post/ui/post/list/post_list_bloc.dart';
+
+import 'android/android_list_post_view.dart';
+import 'ios/ios_list_post_view.dart';
+
+const GreenColor = Color(0xff00A900);
 
 class PostListPage extends StatefulWidget {
   final PostListBloc bloc;
@@ -11,20 +18,51 @@ class PostListPage extends StatefulWidget {
   _PostListPageState createState() => _PostListPageState();
 }
 
-class _PostListPageState extends State<PostListPage> {
-  _getPost() async {
-    final repo = PostApi();
-    final post = await repo.getAllPost();
-  }
-
+class _PostListPageState extends State<PostListPage>
+    with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
-    _getPost();
     return Scaffold(
       appBar: AppBar(
         title: Text("Posts"),
-        backgroundColor: Color(0xff79B900),
+        centerTitle: Platform.isIOS,
       ),
+      body: Platform.isIOS
+          ? IosListPostView(bloc: widget.bloc)
+          : AndroidListPostView(bloc: widget.bloc),
+      floatingActionButtonLocation: Platform.isIOS
+          ? FloatingActionButtonLocation.centerDocked
+          : FloatingActionButtonLocation.endFloat,
+      floatingActionButton: Platform.isIOS
+          ? Container(
+              width: double.infinity,
+              height: 40,
+              color: Colors.red,
+              child: RawMaterialButton(
+                onPressed: () {},
+                child: Text(
+                  "Delete All",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ))
+          : Container(
+              width: 50,
+              height: 50,
+              child: FloatingActionButton(
+                child: Icon(
+                  Icons.delete,
+                  color: Colors.white,
+                ),
+                onPressed: () {},
+                backgroundColor: Colors.red,
+              ),
+            ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    widget.bloc.dispose();
   }
 }

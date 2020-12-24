@@ -34,6 +34,15 @@ class PostListBloc extends BaseBloC {
         stream = stateSubject.stream,
         _postRepository = postRepository;
 
+  getAllPosts() async {
+    currentState.startLoading();
+    _subject.add(currentState);
+
+    currentState.postList = await _postRepository.getAllPost();
+    currentState.stopLoading();
+    _subject.add(currentState);
+  }
+
   @override
   dispose() {
     _subject.close();

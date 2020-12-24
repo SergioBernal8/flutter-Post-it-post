@@ -15,6 +15,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Post it Post',
       theme: ThemeData(
+        primaryColor: Color(0xff00A900),
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: PostListPage(
