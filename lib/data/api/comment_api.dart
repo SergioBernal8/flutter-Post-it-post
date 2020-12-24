@@ -10,8 +10,10 @@ class CommentApi extends CommentRepository {
 
   @override
   Future<List<Comment>> getCommentsForPost(final int postID) async {
-    final url = ApiConstants.baseUrl + "/$postID" + ApiConstants.commentsPath;
-
+    final url = ApiConstants.baseUrl +
+        ApiConstants.postPath +
+        "/$postID" +
+        ApiConstants.commentsPath;
     var response = await http.get(url);
     final jsonConvert = JsonConverter();
 

@@ -1,6 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:post_it_post/data/api/comment_api.dart';
+import 'package:post_it_post/data/api/user_api.dart';
+import 'package:post_it_post/domain/models/post_item.dart';
 import 'package:post_it_post/ui/common/loading_indicator.dart';
+import 'package:post_it_post/ui/post/details/post_datails_page.dart';
+import 'package:post_it_post/ui/post/details/post_detail_bloc.dart';
 
 import '../post_list_bloc.dart';
 import '../post_list_page.dart';
@@ -29,6 +34,17 @@ class _IosListPostViewState extends State<IosListPostView>
         setState(() {});
       });
     widget.bloc.getAllPosts();
+  }
+
+  _goToDetails(PostItem item) {
+    final PostDetailBloc bloc = PostDetailBloc(
+        userRepository: UserApi(),
+        commentRepository: CommentApi(),
+        postItem: item);
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => PostDetailsPage(bloc)),
+    );
   }
 
   @override
@@ -87,13 +103,16 @@ class _IosListPostViewState extends State<IosListPostView>
                               itemCount: data.length,
                               itemBuilder: (context, index) {
                                 final item = data[index];
-                                return Dismissible(
-                                  background: Container(color: Colors.red),
-                                  key: ObjectKey(item.id),
-                                  onDismissed: (direction) {
-                                    widget.bloc.deletePostItem(item.id);
-                                  },
-                                  child: IosPostCell(item),
+                                return GestureDetector(
+                                  onTap: () => _goToDetails(item),
+                                  child: Dismissible(
+                                    background: Container(color: Colors.red),
+                                    key: ObjectKey(item.id),
+                                    onDismissed: (direction) {
+                                      widget.bloc.deletePostItem(item.id);
+                                    },
+                                    child: IosPostCell(item),
+                                  ),
                                 );
                               });
                         }

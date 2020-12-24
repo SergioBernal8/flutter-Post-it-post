@@ -11,8 +11,7 @@ class UserApi extends UserRepository {
 
   @override
   Future<User> getUser(final int id) async {
-    final url = ApiConstants.baseUrl + "/$id" + ApiConstants.postPath;
-
+    final url = ApiConstants.baseUrl + ApiConstants.usersPath + "/$id";
     var response = await http.get(url);
     final jsonConvert = JsonConverter();
 

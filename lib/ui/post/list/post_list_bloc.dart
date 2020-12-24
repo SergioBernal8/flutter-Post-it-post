@@ -42,7 +42,10 @@ class PostListBloc extends BaseBloC {
     currentState.startLoading();
     _subject.add(currentState);
 
-    currentState.postList = await _postRepository.getAllPost();
+    currentState.postList =
+        await _postRepository.getAllPost().catchError((error) {
+      print("Got error: $error");
+    });
 
     int blueDotCount = 20;
 
