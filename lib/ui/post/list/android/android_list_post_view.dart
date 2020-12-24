@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:post_it_post/domain/models/post_item.dart';
 import 'package:post_it_post/ui/common/loading_indicator.dart';
 import 'package:post_it_post/ui/post/list/android/android_post_cell.dart';
 
@@ -52,14 +51,23 @@ class _AndroidListPostViewState extends State<AndroidListPostView>
                   if (snapshot.data.isLoading) {
                     return LoadingIndicator();
                   } else {
-                    final data = snapshot.data.postList;
+                    final data = snapshot.data.postItemList;
                     return ListView.separated(
-                        separatorBuilder: (_, __) =>
-                            Divider(color: Colors.grey),
+                        separatorBuilder: (_, __) => Divider(
+                              color: Colors.grey,
+                              height: 1,
+                            ),
                         itemCount: data.length,
                         itemBuilder: (context, index) {
-                          final postItem = PostItem.fromPost(data[index]);
-                          return AndroidPostCell(postItem);
+                          final item = data[index];
+                          return Dismissible(
+                            background: Container(color: Colors.red),
+                            key: ObjectKey(item.id),
+                            onDismissed: (direction) {
+                              widget.bloc.deletePostItem(item.id);
+                            },
+                            child: AndroidPostCell(item),
+                          );
                         });
                   }
                 }

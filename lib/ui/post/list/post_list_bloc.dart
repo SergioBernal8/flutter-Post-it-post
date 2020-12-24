@@ -3,12 +3,16 @@ import 'package:post_it_post/data/base/post_repository.dart';
 import 'package:post_it_post/domain/bloc/base_bloc.dart';
 import 'package:post_it_post/domain/bloc/base_bloc_state.dart';
 import 'package:post_it_post/domain/models/post.dart';
+import 'package:post_it_post/domain/models/post_item.dart';
 import 'package:rxdart/rxdart.dart';
 
 class PostListState extends BaseBlocState {
   List<Post> postList;
+  List<PostItem> postItemList;
 
-  PostListState._() : postList = [];
+  PostListState._()
+      : postList = [],
+        postItemList = [];
 
   factory PostListState.initial() => PostListState._();
 }
@@ -39,7 +43,23 @@ class PostListBloc extends BaseBloC {
     _subject.add(currentState);
 
     currentState.postList = await _postRepository.getAllPost();
+
+    int blueDotCount = 20;
+
+    currentState.postList.forEach((post) {
+      final postListItem =
+          PostItem.fromPost(post, isRead: blueDotCount <= 0, isFavorite: false);
+      blueDotCount--;
+      currentState.postItemList.add(postListItem);
+    });
+
     currentState.stopLoading();
+    _subject.add(currentState);
+  }
+
+  deletePostItem(int postId) {
+    currentState.postItemList.removeWhere((element) => element.id == postId);
+    currentState.postList.removeWhere((element) => element.id == postId);
     _subject.add(currentState);
   }
 
