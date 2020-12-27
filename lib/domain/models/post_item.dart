@@ -5,8 +5,8 @@ class PostItem {
   final int id;
   final String title;
   final String body;
-  final bool isRead;
-  final bool isFavorite;
+  final int isRead;
+  final int isFavorite;
 
   PostItem(
       {this.userId,
@@ -23,7 +23,36 @@ class PostItem {
         id: post.id,
         title: post.title,
         userId: post.userId,
-        isFavorite: isFavorite,
-        isRead: isRead);
+        isFavorite: isFavorite ? 1 : 0,
+        isRead: isRead ? 1 : 0);
   }
+
+  factory PostItem.fromJson(dynamic data) {
+    return PostItem(
+        userId: data['userId'],
+        id: data['id'],
+        title: data['title'],
+        body: data['body'],
+        isFavorite: data["isFavorite"],
+        isRead: data["isRead"]);
+  }
+
+  factory PostItem.readPost(PostItem postItem) {
+    return PostItem(
+        body: postItem.body,
+        id: postItem.id,
+        title: postItem.title,
+        userId: postItem.userId,
+        isFavorite: postItem.isFavorite,
+        isRead: 1);
+  }
+
+  Map<String, dynamic> toMap() => {
+        "id": id,
+        "userId": userId,
+        "title": title,
+        "body": body,
+        "isRead": isRead,
+        "isFavorite": isFavorite
+      };
 }

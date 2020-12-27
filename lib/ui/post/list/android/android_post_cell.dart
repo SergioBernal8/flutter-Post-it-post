@@ -14,7 +14,7 @@ class AndroidPostCell extends StatelessWidget {
       width: double.infinity,
       child: Row(
         children: [
-          _postItem.isRead
+          _postItem.isRead == 1
               ? Container()
               : Container(
                   width: 10,
@@ -34,7 +34,7 @@ class AndroidPostCell extends StatelessWidget {
             ),
           ),
           Container(width: 5),
-          _postItem.isFavorite
+          _postItem.isFavorite == 1
               ? Icon(
                   Icons.favorite,
                   color: Colors.red,

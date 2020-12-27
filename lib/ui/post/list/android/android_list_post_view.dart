@@ -31,6 +31,7 @@ class _AndroidListPostViewState extends State<AndroidListPostView>
   }
 
   _goToDetails(PostItem item) {
+    widget.bloc.readPostItem(item);
     final PostDetailBloc bloc = PostDetailBloc(
         userRepository: UserApi(),
         commentRepository: CommentApi(),
@@ -67,7 +68,7 @@ class _AndroidListPostViewState extends State<AndroidListPostView>
                   if (snapshot.data.isLoading) {
                     return LoadingIndicator();
                   } else {
-                    final data = snapshot.data.postItemList;
+                    final data = snapshot.data.filteredPostList;
                     return ListView.separated(
                         separatorBuilder: (_, __) => Divider(
                               color: Colors.grey,

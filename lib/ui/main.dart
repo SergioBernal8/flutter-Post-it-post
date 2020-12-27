@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:post_it_post/data/api/post_api.dart';
+import 'package:post_it_post/domain/managers/sq_db_manager.dart';
 import 'package:post_it_post/ui/post/list/post_list_bloc.dart';
 
 import 'post/list/post_list_page.dart';
@@ -19,7 +20,8 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: PostListPage(
-        bloc: PostListBloc(postRepository: PostApi()),
+        bloc: PostListBloc(
+            postRepository: PostApi(), dataBaseManager: SQDBManager()),
       ),
     );
   }

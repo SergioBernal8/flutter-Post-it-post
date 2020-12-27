@@ -20,12 +20,24 @@ class PostListPage extends StatefulWidget {
 
 class _PostListPageState extends State<PostListPage>
     with SingleTickerProviderStateMixin {
+  _deleteAllPosts() {
+    widget.bloc.deleteAllPost();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Posts"),
         centerTitle: Platform.isIOS,
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.refresh,
+            ),
+            onPressed: () => widget.bloc.getAllPosts(isRefreshing: true),
+          )
+        ],
       ),
       body: Platform.isIOS
           ? IosListPostView(bloc: widget.bloc)
@@ -39,7 +51,7 @@ class _PostListPageState extends State<PostListPage>
               height: 40,
               color: Colors.red,
               child: RawMaterialButton(
-                onPressed: () {},
+                onPressed: () => _deleteAllPosts(),
                 child: Text(
                   "Delete All",
                   style: TextStyle(color: Colors.white),

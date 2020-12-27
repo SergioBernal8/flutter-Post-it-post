@@ -37,6 +37,7 @@ class _IosListPostViewState extends State<IosListPostView>
   }
 
   _goToDetails(PostItem item) {
+    widget.bloc.readPostItem(item);
     final PostDetailBloc bloc = PostDetailBloc(
         userRepository: UserApi(),
         commentRepository: CommentApi(),
@@ -94,7 +95,7 @@ class _IosListPostViewState extends State<IosListPostView>
                         if (snapshot.data.isLoading) {
                           return LoadingIndicator();
                         } else {
-                          final data = snapshot.data.postItemList;
+                          final data = snapshot.data.filteredPostList;
                           return ListView.separated(
                               separatorBuilder: (_, __) => Divider(
                                     color: Colors.grey,

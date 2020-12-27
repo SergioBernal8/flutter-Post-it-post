@@ -151,8 +151,6 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
                           );
                         });
                   }
-
-                  return LoadingIndicator();
                 },
               ),
             )

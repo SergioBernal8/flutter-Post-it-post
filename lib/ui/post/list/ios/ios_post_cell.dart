@@ -14,13 +14,13 @@ class IosPostCell extends StatelessWidget {
       width: double.infinity,
       child: Row(
         children: [
-          _postItem.isFavorite
+          _postItem.isFavorite == 1
               ? Icon(
                   Icons.favorite,
                   color: Colors.red,
                   size: 20,
                 )
-              : _postItem.isRead
+              : _postItem.isRead == 1
                   ? Container()
                   : Container(
                       width: 10,
