@@ -113,7 +113,40 @@ class _AndroidListPostViewState extends State<AndroidListPostView>
           ),
           Container(
             color: Colors.white,
-          )
+            child: StreamBuilder<PostListState>(
+              stream: widget.bloc.stream,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  if (snapshot.data.isLoading) {
+                    return LoadingIndicator();
+                  } else {
+                    final data = snapshot.data.filteredPostList;
+                    return ListView.separated(
+                        separatorBuilder: (_, __) => Divider(
+                              color: Colors.grey,
+                              height: 1,
+                            ),
+                        itemCount: data.length,
+                        itemBuilder: (context, index) {
+                          final item = data[index];
+                          return GestureDetector(
+                            onTap: () => _goToDetails(item),
+                            child: Dismissible(
+                              background: Container(color: Colors.red),
+                              key: ObjectKey(item.id),
+                              onDismissed: (direction) {
+                                widget.bloc.deletePostItem(item.id);
+                              },
+                              child: AndroidPostCell(item),
+                            ),
+                          );
+                        });
+                  }
+                }
+                return LoadingIndicator();
+              },
+            ),
+          ),
         ],
       ),
     );

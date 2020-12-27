@@ -53,7 +53,7 @@ class PostItem {
         title: postItem.title,
         userId: postItem.userId,
         isFavorite: favorite,
-        isRead: postItem.isRead);
+        isRead: 1);
   }
 
   Map<String, dynamic> toMap() => {
