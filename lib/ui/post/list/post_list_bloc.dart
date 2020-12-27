@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:post_it_post/data/base/post_repository.dart';
 import 'package:post_it_post/domain/bloc/base_bloc.dart';
@@ -9,6 +10,7 @@ import 'package:rxdart/rxdart.dart';
 class PostListState extends BaseBlocState {
   List<PostItem> filteredPostList;
   List<PostItem> postItemList;
+  bool filterPosts = false;
 
   PostListState._()
       : filteredPostList = [],
@@ -22,6 +24,7 @@ class PostListBloc extends BaseBloC {
   final ValueStream<PostListState> stream;
   final PostRepository _postRepository;
   final BaseDataBaseManager _dataBaseManager;
+  var currentFilter = PostFilter.all;
 
   PostListState get currentState => _subject.value;
 
@@ -51,6 +54,7 @@ class PostListBloc extends BaseBloC {
     await _dataBaseManager.startDataBase();
 
     if (isRefreshing) {
+      currentState.filterPosts = true;
       await _dataBaseManager.deleteAllPostItems();
       _emptyData();
     }
@@ -59,6 +63,7 @@ class PostListBloc extends BaseBloC {
 
     if (allPost.isNotEmpty) {
       currentState.postItemList = allPost;
+      currentState.filteredPostList.addAll(allPost);
       currentState.stopLoading();
       _subject.add(currentState);
       return;
@@ -80,8 +85,13 @@ class PostListBloc extends BaseBloC {
 
     await _dataBaseManager.saveAllPostItems(currentState.postItemList);
 
-    currentState.stopLoading();
-    _subject.add(currentState);
+    if (currentState.filterPosts) {
+      filterPost(currentFilter);
+      currentState.filterPosts = false;
+    } else {
+      currentState.stopLoading();
+      _subject.add(currentState);
+    }
   }
 
   Future<List<PostItem>> _getSavedPostFromDataBase() async {
@@ -97,6 +107,12 @@ class PostListBloc extends BaseBloC {
       _dataBaseManager.updatePostItem(readPost);
       currentState.postItemList[index] = readPost;
 
+      final filterIndex = currentState.filteredPostList
+          .indexWhere((element) => element.id == postItem.id);
+      if (filterIndex != -1) {
+        currentState.filteredPostList[filterIndex] = readPost;
+      }
+
       _subject.add(currentState);
     }
   }
@@ -107,13 +123,49 @@ class PostListBloc extends BaseBloC {
     currentState.postItemList.removeWhere((element) => element.id == postId);
     currentState.filteredPostList
         .removeWhere((element) => element.id == postId);
-
-    _subject.add(currentState);
   }
 
   deleteAllPost() {
     _dataBaseManager.deleteAllPostItems();
     _emptyData();
+  }
+
+  filterPost(PostFilter filter) {
+    currentFilter = filter;
+    switch (filter) {
+      case PostFilter.all:
+        currentState.filteredPostList = currentState.postItemList;
+        break;
+      case PostFilter.favorites:
+        currentState.filteredPostList = currentState.postItemList
+            .where((element) => element.isFavorite == 1)
+            .toList();
+        break;
+    }
+    currentState.stopLoading();
+    _subject.add(currentState);
+  }
+
+  reloadPostData(PostItem postItem) {
+    final index = currentState.postItemList
+        .indexWhere((element) => element.id == postItem.id);
+    if (index != -1) {
+      currentState.postItemList[index] = postItem;
+    }
+
+    if (currentFilter == PostFilter.favorites) {
+      final filteredIndex = currentState.filteredPostList
+          .indexWhere((element) => element.id == postItem.id);
+      if (filteredIndex != -1) {
+        if (postItem.isFavorite == 0) {
+          currentState.filteredPostList.removeAt(filteredIndex);
+        } else {
+          currentState.filteredPostList[filteredIndex] = postItem;
+        }
+      }
+    }
+
+    _subject.add(currentState);
   }
 
   _emptyData() {
@@ -129,3 +181,5 @@ class PostListBloc extends BaseBloC {
     _subject.close();
   }
 }
+
+enum PostFilter { all, favorites }

@@ -6,8 +6,9 @@ import 'package:post_it_post/ui/post/details/post_detail_bloc.dart';
 
 class PostDetailsPage extends StatefulWidget {
   final PostDetailBloc bloc;
+  final UpdateCallBack updateCallback;
 
-  PostDetailsPage(this.bloc);
+  PostDetailsPage(this.bloc, this.updateCallback);
 
   @override
   _PostDetailsPageState createState() => _PostDetailsPageState();
@@ -17,7 +18,6 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
   @override
   void initState() {
     super.initState();
-
     widget.bloc.getUser();
   }
 
@@ -25,8 +25,24 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Posts"),
+        title: Text("Details"),
         centerTitle: Platform.isIOS,
+        actions: [
+          StreamBuilder<PostDetailState>(
+            stream: widget.bloc.stream,
+            builder: (context, snapshot) {
+              Icon icon = (snapshot.data?.postItem?.isFavorite ?? 0) == 1
+                  ? Icon(Icons.favorite)
+                  : Icon(Icons.favorite_border);
+
+              return IconButton(
+                icon: icon,
+                onPressed: () =>
+                    widget.bloc.updatePostFavoriteState(widget.updateCallback),
+              );
+            },
+          )
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),

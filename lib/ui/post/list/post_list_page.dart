@@ -65,7 +65,7 @@ class _PostListPageState extends State<PostListPage>
                   Icons.delete,
                   color: Colors.white,
                 ),
-                onPressed: () {},
+                onPressed: () => _deleteAllPosts(),
                 backgroundColor: Colors.red,
               ),
             ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:post_it_post/data/api/comment_api.dart';
 import 'package:post_it_post/data/api/user_api.dart';
+import 'package:post_it_post/domain/managers/sq_db_manager.dart';
 import 'package:post_it_post/domain/models/post_item.dart';
 import 'package:post_it_post/ui/common/loading_indicator.dart';
 import 'package:post_it_post/ui/post/details/post_datails_page.dart';
@@ -26,8 +27,21 @@ class _AndroidListPostViewState extends State<AndroidListPostView>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this)..addListener(() {});
+    _tabController = TabController(length: 2, vsync: this)
+      ..addListener(() {
+        _filterPost();
+      });
     widget.bloc.getAllPosts();
+  }
+
+  _filterPost() {
+    final filter =
+        _tabController.index == 0 ? PostFilter.all : PostFilter.favorites;
+    widget.bloc.filterPost(filter);
+  }
+
+  _updateCallback(PostItem item) {
+    widget.bloc.reloadPostData(item);
   }
 
   _goToDetails(PostItem item) {
@@ -35,10 +49,12 @@ class _AndroidListPostViewState extends State<AndroidListPostView>
     final PostDetailBloc bloc = PostDetailBloc(
         userRepository: UserApi(),
         commentRepository: CommentApi(),
+        dataBaseManager: SQDBManager(),
         postItem: item);
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => PostDetailsPage(bloc)),
+      MaterialPageRoute(
+          builder: (context) => PostDetailsPage(bloc, _updateCallback)),
     );
   }
 

@@ -46,6 +46,15 @@ class PostItem {
         isFavorite: postItem.isFavorite,
         isRead: 1);
   }
+  factory PostItem.favoritePost(PostItem postItem, int favorite) {
+    return PostItem(
+        body: postItem.body,
+        id: postItem.id,
+        title: postItem.title,
+        userId: postItem.userId,
+        isFavorite: favorite,
+        isRead: postItem.isRead);
+  }
 
   Map<String, dynamic> toMap() => {
         "id": id,
