@@ -37,6 +37,7 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
 
               return IconButton(
                 icon: icon,
+                key: Key("favoriteButton"),
                 onPressed: () =>
                     widget.bloc.updatePostFavoriteState(widget.updateCallback),
               );

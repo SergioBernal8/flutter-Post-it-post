@@ -32,6 +32,7 @@ class _PostListPageState extends State<PostListPage>
         centerTitle: Platform.isIOS,
         actions: [
           IconButton(
+            key: Key("refreshButton"),
             icon: Icon(
               Icons.refresh,
             ),
@@ -51,6 +52,7 @@ class _PostListPageState extends State<PostListPage>
               height: 40,
               color: Colors.red,
               child: RawMaterialButton(
+                key: Key("deleteButton"),
                 onPressed: () => _deleteAllPosts(),
                 child: Text(
                   "Delete All",
@@ -61,6 +63,7 @@ class _PostListPageState extends State<PostListPage>
               width: 50,
               height: 50,
               child: FloatingActionButton(
+                key: Key("FABDeleteButton"),
                 child: Icon(
                   Icons.delete,
                   color: Colors.white,
